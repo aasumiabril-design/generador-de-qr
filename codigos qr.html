@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramienta de Códigos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles for light mode */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC; /* Light off-white background */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            color: #1F2937; /* Dark gray text */
+            transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+        }
+
+        /* Dark mode styles for the entire page body */
+        body.dark {
+            background-color: #0F172A; /* Deep dark blue-gray background */
+            color: #E2E8F0; /* Light gray text for dark mode */
+        }
+
+        /* Main container adapts to dark mode */
+        .app-container {
+            background-color: #ffffff; /* White background in light mode */
+            border-color: #CBD5E1; /* Light gray border */
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.04); /* Soft shadow */
+            transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+        }
+
+        .dark .app-container {
+            background-color: #1E293B; /* Slightly lighter dark blue-gray */
+            border-color: #475569; /* Darker border in dark mode */
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4), 0 5px 10px -5px rgba(0, 0, 0, 0.2); /* Darker shadow */
+        }
+
+        /* Section backgrounds adapt to new palette */
+        section {
+            transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out;
+        }
+        .bg-blue-50 { background-color: #EBF8FF; border-color: #90CDF4; } /* Lighter blue for light mode */
+        .dark .bg-blue-50 { background-color: #2D3A4F; border-color: #4A6385; } /* Darker blue for dark mode */
+
+        .bg-purple-50 { background-color: #F3E8FF; border-color: #D6BCFA; }
+        .dark .bg-purple-50 { background-color: #3B2D4F; border-color: #7B6899; }
+
+        .bg-teal-50 { background-color: #E0FFF8; border-color: #8DE0CF; }
+        .dark .bg-teal-50 { background-color: #2D4F4F; border-color: #689999; }
+
+        .bg-gray-100 { background-color: #F1F5F9; border-color: #E2E8F0; }
+        .dark .bg-gray-100 { background-color: #1A2233; border-color: #364052; } /* Darker gray for history section */
+
+
+        /* Headings adapt to dark mode */
+        h1, h2 {
+            transition: color 0.4s ease-in-out;
+        }
+        .text-indigo-700 { color: #4338CA; } /* Slightly darker indigo for main title */
+        .dark .text-indigo-700 { color: #818CF8; } /* Lighter, brighter indigo for dark mode */
+
+        .text-blue-700 { color: #1D4ED8; }
+        .dark .text-blue-700 { color: #93C5FD; }
+
+        .text-purple-700 { color: #6D28D9; }
+        .dark .text-purple-700 { color: #A78BFA; }
+
+        .text-teal-700 { color: #065F46; }
+        .dark .text-teal-700 { color: #4FD1C5; }
+
+        .text-gray-700 { color: #374151; }
+        .dark .text-gray-700 { color: #E2E8F0; } /* General text */
+        .dark .text-gray-500 { color: #94A3B8; } /* Lighter gray for hints/messages */
+
+
+        /* Form elements adapt to dark mode */
+        .form-input, .form-select {
+            background-color: #ffffff; /* White background in light mode */
+            border-color: #CBD5E1; /* Light gray border */
+            color: #374151; /* Dark gray text */
+            transition: all 0.4s ease-in-out;
+            border-radius: 0.5rem; /* Ensure rounded corners */
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.06); /* Subtle inner shadow */
+        }
+        .dark .form-input, .dark .form-select {
+            background-color: #374151; /* Darker background in dark mode */
+            border-color: #525252; /* Darker border in dark mode */
+            color: #E2E8F0; /* Light text in dark mode */
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); /* Darker inner shadow */
+        }
+        .dark .form-input::placeholder {
+            color: #94A3B8; /* Lighter placeholder in dark mode */
+        }
+
+        /* General buttons adapt to dark mode */
+        button {
+            transition: all 0.3s ease-in-out, transform 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+        }
+        button:hover {
+            transform: translateY(-2px); /* Slightly more pronounced lift on hover */
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        .dark button:hover {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Specific button colors */
+        .bg-indigo-600 { background-color: #4F46E5; } /* Base Indigo */
+        .hover\:bg-indigo-700:hover { background-color: #4338CA; } /* Darker on hover */
+        .dark .bg-indigo-600 { background-color: #6366F1; } /* Lighter Indigo in dark mode */
+        .dark .hover\:bg-indigo-700:hover { background-color: #4F46E5; } /* Original Indigo on hover in dark mode */
+
+        .bg-green-600 { background-color: #059669; }
+        .hover\:bg-green-700:hover { background-color: #047857; }
+        .dark .bg-green-600 { background-color: #34D399; }
+        .dark .hover\:bg-green-700:hover { background-color: #22C55E; }
+
+        /* Download buttons unified style */
+        .download-button {
+            background-color: #3B82F6; /* Brighter blue for download */
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .download-button:hover {
+            background-color: #2563EB; /* Darker blue on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+        .download-button:disabled {
+            background-color: #93C5FD;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .dark .download-button {
+            background-color: #60A5FA; /* Even brighter blue in dark mode */
+        }
+        .dark .download-button:hover {
+            background-color: #3B82F6; /* Original blue on hover in dark mode */
+        }
+        .dark .download-button:disabled {
+            background-color: #93C5FD;
+        }
+
+        .bg-red-500 { background-color: #EF4444; }
+        .hover\:bg-red-600:hover { background-color: #DC2626; }
+        .dark .bg-red-500 { background-color: #F87171; }
+        .dark .hover\:bg-red-600:hover { background-color: #EF4444; }
+
+        .bg-gray-500 { background-color: #6B7280; }
+        .hover\:bg-gray-600:hover { background-color: #4B5563; }
+        .dark .bg-gray-500 { background-color: #9CA3AF; }
+        .dark .hover\:bg-gray-600:hover { background-color: #6B7280; }
+
+
+        /* Canvas and SVG display styles adapt to dark mode */
+        canvas, svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #E5E7EB; /* Light border in light mode */
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background-color: #ffffff; /* White background for codes in light mode */
+            transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out;
+        }
+        .dark canvas, .dark svg {
+            border-color: #374151; /* Darker border for codes in dark mode */
+            background-color: #2C3A4F; /* Dark blue-gray for codes in dark mode */
+        }
+
+        /* Adjust labels and inputs in download sections for dark mode */
+        .download-options label {
+            color: #374151; /* Default dark color for light mode */
+        }
+        .dark .download-options label {
+            color: #000000 !important; /* Black text for labels in dark mode, as requested */
+            font-weight: 600; /* Ensure it's bold/semibold for readability */
+        }
+
+        /* History item label specifically overridden to white for both modes */
+        .history-item label {
+            color: #FFFFFF !important; /* White text for history labels in both modes */
+            font-weight: 600; /* Ensure it's bold/semibold for readability */
+        }
+
+        /* Specific override for input fields and selects in download options to have dark background and light text in dark mode */
+        .dark .download-options input[type="text"],
+        .dark .download-options select,
+        .dark .history-item .form-input, /* Apply to history item inputs */
+        .dark .history-item .form-select { /* Apply to history item selects */
+            background-color: #374151; /* Darker background */
+            border-color: #525252; /* Darker border */
+            color: #E2E8F0; /* Light text color */
+        }
+        .dark .download-options input[type="text"]::placeholder,
+        .dark .history-item .form-input::placeholder {
+            color: #94A3B8; /* Lighter placeholder in dark mode */
+        }
+
+
+        /* History item styles adapt to dark mode */
+        .history-item { /* Added class to target only dynamic items */
+            background-color: #ffffff; /* White background in light mode */
+            border-color: #E2E8F0; /* Light border in light mode */
+            transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .dark .history-item { /* Target with new class */
+            background-color: #2D3748; /* Darker background for history items in dark mode (slightly lighter than main app container) */
+            border-color: #4A5568; /* Darker border for history items */
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        .dark .history-item img { /* Target with new class */
+            border-color: #4A5568; /* Darker border for history code images */
+            background-color: #2C3A4F; /* Background for history code images in dark mode (consistent with main code display) */
+        }
+        .dark .history-item input[type="checkbox"] { /* Target with new class */
+            background-color: #4A5568;
+            border-color: #718096;
+        }
+        .dark .history-item input[type="checkbox"]:checked { /* Target with new class */
+            background-color: #6366F1;
+            border-color: #6366F1;
+        }
+
+        /* Theme Toggle Button Styling (Smaller and More Integrated) */
+        .theme-toggle-button {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background-color: #E2E8F0; /* Light gray for light mode */
+            color: #475569; /* Darker text */
+            padding: 0.6rem; /* Smaller padding */
+            border-radius: 9999px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Subtle shadow */
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem; /* Smaller icon size */
+            z-index: 1001;
+            border: none; /* No explicit border */
+        }
+
+        .theme-toggle-button:hover {
+            transform: scale(1.1); /* Slight pop on hover */
+            background-color: #D1D5DB; /* Slightly darker gray on hover */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .dark .theme-toggle-button {
+            background-color: #374151; /* Darker background for dark mode */
+            color: #CBD5E0; /* Lighter text for dark mode */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .dark .theme-toggle-button:hover {
+            background-color: #4A5568; /* Slightly lighter on hover in dark mode */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body class="selection:bg-indigo-300 dark:selection:bg-indigo-700">
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle-button">
+        <span id="themeIcon">☀️</span> <!-- Sun icon for light mode -->
+    </button>
+
+    <!-- Main Application Container -->
+    <div class="flex flex-col items-center p-6 md:p-10 rounded-xl w-full max-w-6xl app-container">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-700 mb-6 text-center">
+            Herramienta de Códigos
+        </h1>
+
+        <!-- Sección de Entrada General -->
+        <section class="w-full mb-6 p-4 rounded-lg border-2 border-blue-200 bg-blue-50">
+            <h2 class="text-xl font-semibold text-blue-700 mb-3">Entrada de Texto</h2>
+            <label for="inputText" class="block text-gray-700 text-sm font-semibold mb-2">
+                Ingresa el texto o URL a codificar:
+            </label>
+            <input
+                type="text"
+                id="inputText"
+                class="form-input"
+                placeholder="Ej. Hola Mundo o https://ejemplo.com"
+            >
+        </section>
+
+
+        <!-- Contenedor para Opciones de QR y Barcode Lado a Lado -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mb-8">
+            <!-- Sección de Opciones de Código QR -->
+            <section class="p-4 rounded-lg border-2 border-purple-200 bg-purple-50">
+                <h2 class="text-xl font-semibold text-purple-700 mb-3">Opciones de Código QR</h2>
+                <div class="flex flex-col gap-4 mb-4">
+                    <div class="w-full sm:w-1/2">
+                        <label for="qrForeground" class="block text-gray-700 text-sm font-semibold mb-1">Color de Primer Plano:</label>
+                        <input type="color" id="qrForeground" value="#000000" class="w-full h-10 rounded-lg border-2 border-gray-300">
+                    </div>
+                    <div class="w-full sm:w-1/2">
+                        <label for="qrBackground" class="block text-gray-700 text-sm font-semibold mb-1">Color de Fondo:</label>
+                        <input type="color" id="qrBackground" value="#ffffff" class="w-full h-10 rounded-lg border-2 border-gray-300">
+                    </div>
+                </div>
+                <div>
+                    <label for="qrSize" class="block text-gray-700 text-sm font-semibold mb-1">Tamaño (px):</label>
+                    <input type="number" id="qrSize" value="250" min="50" max="1000" class="form-input">
+                </div>
+                <div>
+                    <label for="qrErrorCorrection" class="block text-gray-700 text-sm font-semibold mb-1">Nivel de Corrección de Errores:</label>
+                    <select id="qrErrorCorrection" class="form-select">
+                        <option value="L">Bajo (L)</option>
+                        <option value="M">Medio (M)</option>
+                        <option value="Q">Cuartil (Q)</option>
+                        <option value="H" selected>Alto (H)</option>
+                    </select>
+                </div>
+                <button
+                    onclick="generateQrCode()"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-md w-full"
+                >
+                    Generar QR
+                </button>
+            </section>
+
+            <!-- Sección de Opciones de Código de Barras -->
+            <section class="p-4 rounded-lg border-2 border-teal-200 bg-teal-50">
+                <h2 class="text-xl font-semibold text-teal-700 mb-3">Opciones de Código de Barras</h2>
+                <div class="mb-4">
+                    <label for="barcodeFormat" class="block text-gray-700 text-sm font-semibold mb-1">Formato:</label>
+                    <select id="barcodeFormat" class="form-select" onchange="displayBarcodeFormatInfo()">
+                        <option value="CODE128">CODE128 (Texto)</option>
+                        <option value="EAN13">EAN13 (Números)</option>
+                        <option value="UPC">UPC (Números)</option>
+                        <option value="CODE39">CODE39 (MAYÚSCULAS)</option>
+                    </select>
+                    <p id="barcodeFormatInfo" class="mt-2 text-sm text-gray-600 dark:text-gray-400"></p>
+                </div>
+                <button
+                    onclick="generateBarcodeCode()"
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md w-full"
+                >
+                    Generar Código de Barras
+                </button>
+            </section>
+        </div>
+
+        <!-- Botón para generar ambos códigos -->
+        <button
+            onclick="generateBothCodes()"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg w-full md:w-auto mb-8 transform hover:scale-105 transition-all duration-300"
+        >
+            Generar QR y Barras
+        </button>
+
+        <!-- Sección de Resultados (Códigos Generados Actualmente) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+            <!-- Sección de Código QR -->
+            <div class="flex flex-col items-center p-4 rounded-lg shadow-inner border-2 border-indigo-200 bg-indigo-50">
+                <h2 class="text-2xl font-semibold text-indigo-600 mb-4">Código QR</h2>
+                <canvas id="qrcodeCanvas" class="p-2 rounded-lg shadow-md border-2 border-gray-200"></canvas>
+                <p id="qrMessage" class="mt-2 text-sm text-gray-500 hidden">No se ha generado ningún QR.</p>
+                <div class="w-full flex flex-col items-center mt-4 download-options">
+                    <label for="qrFilenameInput" class="block text-gray-700 text-sm font-semibold mb-1">Nombre de archivo (QR):</label>
+                    <input type="text" id="qrFilenameInput" class="form-input text-center mb-2" value="qrcode">
+                    <label for="qrDownloadFormat" class="block text-gray-700 text-sm font-semibold mb-1">Formato de descarga (QR):</label>
+                    <select id="qrDownloadFormat" class="form-select mb-4">
+                        <option value="image/png">PNG</option>
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/webp">WebP</option>
+                        <option value="image/gif">GIF</option>
+                    </select>
+                    <button id="downloadQrBtn" onclick="downloadCurrentQrCode()" class="download-button w-full" disabled>
+                        Descargar QR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sección de Código de Barras -->
+            <div class="flex flex-col items-center p-4 rounded-lg shadow-inner border-2 border-green-200 bg-green-50">
+                <h2 class="text-2xl font-semibold text-green-600 mb-4">Código de Barras</h2>
+                <svg id="barcodeSvg" class="p-2 rounded-lg shadow-md border-2 border-gray-200"></svg>
+                <p id="barcodeMessage" class="mt-2 text-sm text-gray-500 hidden">No se ha generado ningún Código de Barras.</p>
+                <div class="w-full flex flex-col items-center mt-4 download-options">
+                    <label for="barcodeFilenameInput" class="block text-gray-700 text-sm font-semibold mb-1">Nombre de archivo (Barras):</label>
+                    <input type="text" id="barcodeFilenameInput" class="form-input text-center mb-2" value="barcode">
+                    <label for="barcodeDownloadFormat" class="block text-gray-700 text-sm font-semibold mb-1">Formato de descarga (Barras):</label>
+                    <select id="barcodeDownloadFormat" class="form-select mb-4">
+                        <option value="image/svg+xml">SVG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                    <button id="downloadBarcodeBtn" onclick="downloadCurrentBarcode()" class="download-button w-full" disabled>
+                        Descargar Barras
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Historial -->
+        <section class="w-full mt-10 p-6 rounded-xl shadow-inner border-2 border-gray-300 bg-gray-100">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4 sm:gap-0">
+                <h2 class="text-2xl font-bold text-gray-700">Historial de Códigos</h2>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <button
+                        onclick="deleteSelectedHistoryItems()"
+                        class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md text-sm"
+                    >
+                        Borrar Seleccionados
+                    </button>
+                    <button
+                        onclick="clearAllHistory()"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md text-sm"
+                    >
+                        Borrar Todo
+                    </button>
+                </div>
+            </div>
+            <div id="historyList" class="flex flex-col gap-4">
+                <!-- Generated codes will be inserted here dynamically -->
+            </div>
+            <p class="text-center text-gray-500 mt-4" id="noHistoryMessage">No hay códigos en el historial.</p>
+        </section>
+
+    </div>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="modalTitle" class="text-xl font-bold mb-4 text-gray-800"></h3>
+            <p id="modalMessage" class="text-gray-700 mb-6"></p>
+            <button onclick="closeModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <!-- QRious for QR Code Generation -->
+    <script src="https://unpkg.com/qrious@4.0.2/dist/qrious.min.js"></script>
+    <!-- JsBarcode for Barcode Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+    <script>
+        let generatedCodesHistory = [];
+        const HISTORY_STORAGE_KEY = 'qrBarcodeHistory';
+        const THEME_STORAGE_KEY = 'themePreference';
+
+        // Function to get a unique timestamp for filenames
+        function getUniqueTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+        }
+
+        // Set default filenames with current date and time on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const timestamp = getUniqueTimestamp();
+            document.getElementById('qrFilenameInput').value = `qrcode_${timestamp}`;
+            document.getElementById('barcodeFilenameInput').value = `barcode_${timestamp}`;
+            loadHistory();
+            applyTheme();
+            displayBarcodeFormatInfo(); // Display initial info for barcode format
+        });
+
+
+        /**
+         * Shows a message modal to the user.
+         * @param {string} title - Title of the modal.
+         * @param {string} message - Message to display.
+         */
+        function showMessageModal(title, message) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('messageModal').classList.remove('hidden');
+        }
+
+        /**
+         * Closes the message modal.
+         */
+        function closeModal() {
+            document.getElementById('messageModal').classList.add('hidden');
+        }
+
+        /**
+         * Generic function to download a file.
+         * @param {string} dataUrl - The data URL (data:image/...).
+         * @param {string} filename - The filename for the download.
+         */
+        function downloadDataUrl(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            if (dataUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(dataUrl);
+            }
+        }
+
+        /**
+         * Downloads the current QR code.
+         */
+        function downloadCurrentQrCode() {
+            const qrcodeCanvas = document.getElementById('qrcodeCanvas');
+            const filenameInput = document.getElementById('qrFilenameInput');
+            const formatSelect = document.getElementById('qrDownloadFormat');
+
+            let filename = filenameInput.value.trim();
+            const format = formatSelect.value;
+            let extension = format.split('/')[1].replace('jpeg', 'jpg');
+            if (extension === 'svg+xml') extension = 'svg'; // Though QR is not SVG by default
+
+            if (!filename) {
+                filename = `qrcode_${getUniqueTimestamp()}`;
+            }
+
+            let dataURL = qrcodeCanvas.toDataURL(format);
+            downloadDataUrl(dataURL, `${filename}.${extension}`);
+        }
+
+        /**
+         * Downloads the current barcode.
+         */
+        function downloadCurrentBarcode() {
+            const barcodeSvgElement = document.getElementById('barcodeSvg');
+            const filenameInput = document.getElementById('barcodeFilenameInput');
+            const formatSelect = document.getElementById('barcodeDownloadFormat');
+
+            let filename = filenameInput.value.trim();
+            const format = formatSelect.value;
+            let extension = format.split('/')[1];
+            if (extension === 'svg+xml') {
+                extension = 'svg';
+            } else if (extension === 'jpeg') {
+                extension = 'jpg';
+            }
+
+
+            if (!filename) {
+                filename = `barcode_${getUniqueTimestamp()}`;
+            }
+
+            if (format === 'image/svg+xml') {
+                const svgData = new XMLSerializer().serializeToString(barcodeSvgElement);
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+                downloadDataUrl(url, `${filename}.svg`);
+            } else { // Handle PNG, JPEG, WebP for barcode by drawing SVG to canvas
+                const svgString = new XMLSerializer().serializeToString(barcodeSvgElement);
+                const img = new Image();
+                const svg = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svg);
+
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    // Use natural dimensions of the rendered SVG image
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    URL.revokeObjectURL(url);
+                    const dataURL = canvas.toDataURL(format);
+                    downloadDataUrl(dataURL, `${filename}.${extension}`);
+                };
+                img.onerror = () => {
+                    showMessageModal('Error de Descarga', 'No se pudo renderizar el SVG a la imagen seleccionada. Inténtalo de nuevo.');
+                };
+                img.src = url;
+            }
+        }
+
+        /**
+         * Validates text input based on the selected barcode format.
+         * @param {string} text - The text to validate.
+         * @param {string} format - The barcode format (e.g., "EAN13").
+         * @returns {object} - An object with { isValid: boolean, errorMessage: string, example: string }.
+         */
+        function validateInput(text, format) {
+            let isValid = true;
+            let errorMessage = '';
+            let example = '';
+
+            switch (format) {
+                case 'EAN13':
+                    if (!/^\d+$/.test(text)) {
+                        isValid = false;
+                        errorMessage = 'EAN13 requiere solo dígitos numéricos.';
+                        example = 'Ej: 123456789012 (12 o 13 dígitos)';
+                    } else if (text.length !== 12 && text.length !== 13) {
+                        isValid = false;
+                        errorMessage = 'EAN13 debe tener 12 o 13 dígitos.';
+                        example = 'Ej: 123456789012';
+                    }
+                    break;
+                case 'UPC':
+                    if (!/^\d+$/.test(text)) {
+                        isValid = false;
+                        errorMessage = 'UPC requiere solo dígitos numéricos.';
+                        example = 'Ej: 01234567890 (11 o 12 dígitos)';
+                    } else if (text.length !== 11 && text.length !== 12) {
+                        isValid = false;
+                        errorMessage = 'UPC debe tener 11 o 12 dígitos.';
+                        example = 'Ej: 01234567890';
+                    }
+                    break;
+                case 'CODE39':
+                    if (!/^[A-Z0-9\-\.\$\/\+\%\s]+$/.test(text)) {
+                        isValid = false;
+                        errorMessage = 'CODE39: MAYÚSCULAS, 0-9, -.$/+% espacio.';
+                        example = 'Ej: PROD-ABC-123';
+                    }
+                    break;
+                case 'CODE128':
+                    if (text.length === 0) {
+                        isValid = false;
+                        errorMessage = 'CODE128 no puede estar vacío.';
+                        example = 'Ej: Cualquier texto (Orden#XYZ)';
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return { isValid, errorMessage, example };
+        }
+
+        /**
+         * Saves the currently displayed QR and Barcode to the browser history (localStorage).
+         * This function is now called automatically after successful code generation.
+         */
+        function saveCurrentCodesToHistory() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const qrcodeCanvas = document.getElementById('qrcodeCanvas');
+            const barcodeSvgElement = document.getElementById('barcodeSvg');
+
+            let qrDataUrl = '';
+            if (qrcodeCanvas.dataset.hasContent) {
+                 // Convert to PNG for storage to avoid potential canvas rendering issues from history
+                qrDataUrl = qrcodeCanvas.toDataURL('image/png');
+            }
+
+            let barcodeSvgData = '';
+            if (barcodeSvgElement.dataset.hasContent) {
+                // Store raw SVG string
+                barcodeSvgData = new XMLSerializer().serializeToString(barcodeSvgElement);
+            }
+
+            // Only save if at least one code has content
+            if (!inputText && !qrDataUrl && !barcodeSvgData) {
+                // No need to show modal here if it's auto-triggered and nothing was generated
+                return;
+            }
+
+            const timestamp = new Date().toLocaleString();
+            const newEntry = { text: inputText, qrDataUrl, barcodeSvgDataUrl: barcodeSvgData, timestamp };
+            generatedCodesHistory.unshift(newEntry);
+            localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(generatedCodesHistory));
+            renderHistory();
+        }
+
+
+        /**
+         * Loads code history from localStorage.
+         */
+        function loadHistory() {
+            const storedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+            if (storedHistory) {
+                generatedCodesHistory = JSON.parse(storedHistory);
+            }
+            renderHistory(); // Render history on page load
+        }
+
+        /**
+         * Loads a code from history into the input field and generates it.
+         * @param {number} index - The index of the item in history.
+         */
+        function loadCodeFromHistory(index) {
+            if (index >= 0 && index < generatedCodesHistory.length) {
+                const item = generatedCodesHistory[index];
+                document.getElementById('inputText').value = item.text;
+                // Generate QR code with stored data URL
+                const qrcodeCanvas = document.getElementById('qrcodeCanvas');
+                const qrMessage = document.getElementById('qrMessage');
+                const downloadQrBtn = document.getElementById('downloadQrBtn');
+
+                if (item.qrDataUrl) {
+                    const img = new Image();
+                    img.onload = () => {
+                        qrcodeCanvas.width = img.naturalWidth;
+                        qrcodeCanvas.height = img.naturalHeight;
+                        const ctx = qrcodeCanvas.getContext('2d');
+                        ctx.clearRect(0, 0, qrcodeCanvas.width, qrcodeCanvas.height);
+                        ctx.drawImage(img, 0, 0);
+                        qrMessage.classList.add('hidden');
+                        downloadQrBtn.disabled = false;
+                        qrcodeCanvas.dataset.hasContent = 'true';
+                    };
+                    img.onerror = () => {
+                        console.error("Error loading QR from history image:", item.qrDataUrl);
+                        qrMessage.classList.remove('hidden');
+                        downloadQrBtn.disabled = true;
+                        qrcodeCanvas.getContext('2d').clearRect(0, 0, qrcodeCanvas.width, qrcodeCanvas.height);
+                        delete qrcodeCanvas.dataset.hasContent;
+                    }
+                    img.src = item.qrDataUrl;
+                } else {
+                    qrMessage.classList.remove('hidden');
+                    downloadQrBtn.disabled = true;
+                    qrcodeCanvas.getContext('2d').clearRect(0, 0, qrcodeCanvas.width, qrcodeCanvas.height);
+                    delete qrcodeCanvas.dataset.hasContent;
+                }
+
+                // Generate Barcode with stored SVG data
+                const barcodeSvg = document.getElementById('barcodeSvg');
+                const barcodeMessage = document.getElementById('barcodeMessage');
+                const downloadBarcodeBtn = document.getElementById('downloadBarcodeBtn');
+
+                if (item.barcodeSvgDataUrl) {
+                    barcodeSvg.innerHTML = item.barcodeSvgDataUrl; // Insert raw SVG string
+                    barcodeMessage.classList.add('hidden');
+                    downloadBarcodeBtn.disabled = false;
+                    barcodeSvg.dataset.hasContent = 'true';
+
+                    // Ensure SVG dimensions are set for proper display/download
+                    // This part uses the actual SVG element rendered, not tempSvg
+                    const firstChild = barcodeSvg.firstElementChild;
+                    if (firstChild && firstChild.tagName === 'svg') {
+                        const boundingBox = firstChild.getBBox();
+                        if (boundingBox.width && boundingBox.height) {
+                            barcodeSvg.setAttribute('width', boundingBox.width);
+                            barcodeSvg.setAttribute('height', boundingBox.height);
+                            barcodeSvg.setAttribute('viewBox', `0 0 ${boundingBox.width} ${boundingBox.height}`);
+                        } else {
+                            // Fallback if viewBox or getBBox is not reliable
+                            barcodeSvg.setAttribute('width', '600');
+                            barcodeSvg.setAttribute('height', '300');
+                            barcodeSvg.setAttribute('viewBox', '0 0 600 300');
+                        }
+                    }
+                } else {
+                    barcodeMessage.classList.remove('hidden');
+                    downloadBarcodeBtn.disabled = true;
+                    barcodeSvg.innerHTML = '';
+                    delete barcodeSvg.dataset.hasContent;
+                }
+            }
+        }
+
+        /**
+         * Utility function to convert UTF-8 string to Base64 (for SVG display in history).
+         * @param {string} str - The UTF-8 string.
+         * @returns {string} - The Base64 encoded string.
+         */
+        function utf8ToBase64(str) {
+            try {
+                return btoa(unescape(encodeURIComponent(str)));
+            } catch (e) {
+                console.error("Error encoding to Base64:", e);
+                return ''; // Return empty string on error
+            }
+        }
+
+        /**
+         * Renders the code history in the user interface.
+         */
+        function renderHistory() {
+            const historyListDiv = document.getElementById('historyList');
+            const noHistoryMessage = document.getElementById('noHistoryMessage');
+
+            // Clear only the dynamically added history items (those with class 'history-item')
+            historyListDiv.querySelectorAll('.history-item').forEach(item => item.remove());
+
+            if (generatedCodesHistory.length === 0) {
+                if (noHistoryMessage) { // Check if element exists before manipulating
+                    noHistoryMessage.classList.remove('hidden');
+                }
+                return;
+            } else {
+                if (noHistoryMessage) { // Check if element exists before manipulating
+                    noHistoryMessage.classList.add('hidden');
+                }
+            }
+
+            generatedCodesHistory.forEach((item, index) => {
+                const historyItemDiv = document.createElement('div');
+                historyItemDiv.className = 'history-item flex flex-col md:flex-row items-center bg-white p-4 rounded-lg shadow-md border-2 border-gray-200 space-y-4 md:space-y-0 md:space-x-4 dark:bg-gray-800 dark:border-gray-700';
+                historyItemDiv.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <input type="checkbox" class="h-5 w-5 text-indigo-600 rounded focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600" data-index="${index}">
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 flex-grow">
+                        <div class="flex flex-col items-center">
+                            ${item.qrDataUrl ? `<img src="${item.qrDataUrl}" alt="Código QR del historial" class="w-24 h-24 object-contain rounded-md border-2 border-gray-200 p-1 dark:border-gray-700 dark:bg-gray-700">` : `<p class="text-xs text-gray-500 text-center dark:text-gray-400 w-24 h-24 flex items-center justify-center border-2 border-gray-200 rounded-md">No QR</p>`}
+                            <label for="qrHistFilename-${index}" class="block text-gray-700 text-xs font-semibold mt-2">Nombre:</label>
+                            <input type="text" id="qrHistFilename-${index}" class="form-input text-center text-xs px-1 py-0.5 w-24 mb-1" value="qrcode_hist_${getUniqueTimestamp()}">
+                            <label for="qrHistFormat-${index}" class="block text-gray-700 text-xs font-semibold">Formato:</label>
+                            <select id="qrHistFormat-${index}" class="form-select text-xs px-1 py-0.5 w-24 mb-2">
+                                <option value="image/png">PNG</option>
+                                <option value="image/jpeg">JPEG</option>
+                                <option value="image/webp">WebP</option>
+                                <option value="image/gif">GIF</option>
+                            </select>
+                            <button onclick="downloadHistoryQrCode(${index})" class="download-button text-xs py-1 px-2" ${!item.qrDataUrl ? 'disabled' : ''}>Descargar QR</button>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            ${item.barcodeSvgDataUrl ? `<img src="data:image/svg+xml;base64,${utf8ToBase64(item.barcodeSvgDataUrl)}" alt="Código de Barras del historial" class="w-48 h-32 object-contain rounded-md border-2 border-gray-200 p-1 dark:border-gray-700 dark:bg-gray-700">` : `<p class="text-xs text-gray-500 text-center dark:text-gray-400 w-48 h-32 flex items-center justify-center border-2 border-gray-200 rounded-md">No Barcode</p>`}
+                            <label for="barcodeHistFilename-${index}" class="block text-gray-700 text-xs font-semibold mt-2">Nombre:</label>
+                            <input type="text" id="barcodeHistFilename-${index}" class="form-input text-center text-xs px-1 py-0.5 w-28 mb-1" value="barcode_hist_${getUniqueTimestamp()}">
+                            <label for="barcodeHistFormat-${index}" class="block text-gray-700 text-xs font-semibold">Formato:</label>
+                            <select id="barcodeHistFormat-${index}" class="form-select text-xs px-1 py-0.5 w-28 mb-2">
+                                <option value="image/svg+xml">SVG</option>
+                                <option value="image/png">PNG</option>
+                                <option value="image/jpeg">JPEG</option>
+                                <option value="image/webp">WebP</option>
+                            </select>
+                            <button onclick="downloadHistoryBarcode(${index})" class="mt-2 download-button text-xs py-1 px-2" ${!item.barcodeSvgDataUrl ? 'disabled' : ''}>Descargar Barras</button>
+                        </div>
+                    </div>
+                    <div class="flex-grow text-center md:text-left">
+                        <p class="font-semibold text-gray-800 break-words mb-1 dark:text-gray-200">Texto: <span class="font-normal">${item.text || 'N/A'}</span></p>
+                        <p class="text-sm text-gray-500 mb-2 dark:text-gray-400">Generado: ${item.timestamp}</p>
+                        <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                            <button onclick="loadCodeFromHistory(${index})" class="bg-blue-400 hover:bg-blue-500 text-white text-xs font-bold py-1.5 px-3 rounded-lg transition duration-200 ease-in-out dark:bg-blue-600 dark:hover:bg-blue-700">
+                                Cargar
+                            </button>
+                            <button onclick="deleteHistoryItem(${index})" class="bg-red-400 hover:bg-red-500 text-white text-xs font-bold py-1.5 px-3 rounded-lg transition duration-200 ease-in-out dark:bg-red-600 dark:hover:bg-red-700">
+                                Borrar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                historyListDiv.appendChild(historyItemDiv);
+            });
+        }
+
+        /**
+         * Downloads a QR code from history.
+         * @param {number} index - The index of the history item.
+         */
+        function downloadHistoryQrCode(index) {
+            const item = generatedCodesHistory[index];
+            if (!item || !item.qrDataUrl) {
+                showMessageModal('Error', 'Elemento de historial QR no encontrado o no válido.');
+                return;
+            }
+
+            const filenameInput = document.getElementById(`qrHistFilename-${index}`);
+            const formatSelect = document.getElementById(`qrHistFormat-${index}`);
+
+            let filename = filenameInput.value.trim();
+            const format = formatSelect.value;
+            const extension = format.split('/')[1].replace('jpeg', 'jpg');
+
+            if (!filename) {
+                filename = `qrcode_hist_${index}_${getUniqueTimestamp()}`;
+            }
+
+            // Create a temporary canvas to draw the QR code from its data URL
+            const tempCanvas = document.createElement('canvas');
+            const img = new Image();
+            img.onload = () => {
+                tempCanvas.width = img.naturalWidth;
+                tempCanvas.height = img.naturalHeight;
+                const ctx = tempCanvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const dataURL = tempCanvas.toDataURL(format);
+                downloadDataUrl(dataURL, `${filename}.${extension}`);
+            };
+            img.onerror = () => {
+                showMessageModal('Error de Descarga', 'No se pudo cargar la imagen del QR para la descarga.');
+            };
+            img.src = item.qrDataUrl;
+        }
+
+        /**
+         * Downloads a barcode from history.
+         * @param {number} index - The index of the history item.
+         */
+        function downloadHistoryBarcode(index) {
+            const item = generatedCodesHistory[index];
+            if (!item || !item.barcodeSvgDataUrl) {
+                showMessageModal('Error', 'Elemento de historial de código de barras no encontrado o no válido.');
+                return;
+            }
+
+            const filenameInput = document.getElementById(`barcodeHistFilename-${index}`);
+            const formatSelect = document.getElementById(`barcodeHistFormat-${index}`);
+
+            let filename = filenameInput.value.trim();
+            const format = formatSelect.value;
+            let extension = format.split('/')[1];
+            if (extension === 'svg+xml') {
+                extension = 'svg';
+            } else if (extension === 'jpeg') {
+                extension = 'jpg';
+            }
+
+            if (!filename) {
+                filename = `barcode_hist_${index}_${getUniqueTimestamp()}`;
+            }
+
+            const svgString = item.barcodeSvgDataUrl; // This is the raw SVG XML string
+
+            if (format === 'image/svg+xml') {
+                const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+                downloadDataUrl(url, `${filename}.svg`);
+            } else { // Handle PNG, JPEG, WebP for barcode by drawing SVG to canvas
+                const img = new Image();
+                const svgAsBlobUrl = URL.createObjectURL(new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' }));
+
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    // Use natural dimensions of the rendered SVG image
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    URL.revokeObjectURL(svgAsBlobUrl); // Revoke URL after drawing
+                    const dataURL = canvas.toDataURL(format);
+                    downloadDataUrl(dataURL, `${filename}.${extension}`);
+                };
+                img.onerror = () => {
+                    showMessageModal('Error de Descarga', 'No se pudo renderizar el SVG a la imagen seleccionada. Inténtalo de nuevo.');
+                };
+                img.src = svgAsBlobUrl;
+            }
+        }
+
+        /**
+         * Deletes a history item by its index.
+         * @param {number} index - The index of the item to delete.
+         */
+        function deleteHistoryItem(index) {
+            if (confirm('¿Estás seguro de que quieres borrar este código del historial?')) {
+                generatedCodesHistory.splice(index, 1);
+                localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(generatedCodesHistory));
+                renderHistory();
+            }
+        }
+
+        /**
+         * Deletes selected history items.
+         */
+        function deleteSelectedHistoryItems() {
+            const checkboxes = document.querySelectorAll('#historyList input[type="checkbox"]:checked');
+            if (checkboxes.length === 0) {
+                showMessageModal('Selección Vacía', 'Por favor, selecciona al menos un código para borrar.');
+                return;
+            }
+
+            if (confirm(`¿Estás seguro de que quieres borrar ${checkboxes.length} códigos seleccionados?`)) {
+                const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)).sort((a, b) => b - a);
+
+                indicesToDelete.forEach(index => {
+                    generatedCodesHistory.splice(index, 1);
+                });
+
+                localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(generatedCodesHistory));
+                renderHistory();
+            }
+        }
+
+        /**
+         * Clears all generated code history.
+         */
+        function clearAllHistory() {
+            if (confirm('¿Estás seguro de que quieres borrar todo el historial? Esta acción es irreversible.')) {
+                generatedCodesHistory = [];
+                localStorage.removeItem(HISTORY_STORAGE_KEY);
+                renderHistory();
+            }
+        }
+
+        /**
+         * Displays information about the selected barcode format.
+         */
+        function displayBarcodeFormatInfo() {
+            const barcodeFormat = document.getElementById('barcodeFormat').value;
+            const barcodeFormatInfo = document.getElementById('barcodeFormatInfo');
+            let infoText = '';
+
+            switch (barcodeFormat) {
+                case 'CODE128':
+                    infoText = 'Para texto alfanumérico general, ideal para cadenas de texto largas o complejas (letras, números y símbolos). Uso común en logística y etiquetado.';
+                    break;
+                case 'EAN13':
+                    infoText = 'Para productos de consumo, utiliza 13 dígitos numéricos. Comúnmente encontrado en artículos de supermercado.';
+                    break;
+                case 'UPC':
+                    infoText = 'Código de producto universal, similar a EAN13 pero con 12 dígitos numéricos. Predominante en Norteamérica.';
+                    break;
+                case 'CODE39':
+                    infoText = 'Para texto alfanumérico, pero limitado a letras mayúsculas, números y algunos símbolos especiales. Ampliamente usado en la industria y el inventario.';
+                    break;
+                default:
+                    infoText = '';
+            }
+            barcodeFormatInfo.textContent = infoText;
+        }
+
+
+        /**
+         * Generates only the QR code.
+         */
+        function generateQrCode() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const qrcodeCanvas = document.getElementById('qrcodeCanvas');
+            const qrMessage = document.getElementById('qrMessage');
+            const downloadQrBtn = document.getElementById('downloadQrBtn');
+            const qrFilenameInput = document.getElementById('qrFilenameInput');
+
+            if (!inputText) {
+                showMessageModal('Error de Entrada', 'Por favor, introduce texto o una URL para generar el código QR.');
+                // Only clear canvas and disable button if there's no previous content
+                if (!qrcodeCanvas.dataset.hasContent || qrcodeCanvas.toDataURL('image/png').length < 1000) { // Check for actual content
+                    qrMessage.classList.remove('hidden');
+                    downloadQrBtn.disabled = true;
+                    qrcodeCanvas.getContext('2d').clearRect(0, 0, qrcodeCanvas.width, qrcodeCanvas.height);
+                    delete qrcodeCanvas.dataset.hasContent;
+                }
+                return;
+            }
+
+            try {
+                const qrForeground = document.getElementById('qrForeground').value;
+                const qrBackground = document.getElementById('qrBackground').value;
+                const qrSize = parseInt(document.getElementById('qrSize').value);
+                const qrErrorCorrection = document.getElementById('qrErrorCorrection').value;
+
+                new QRious({
+                    element: qrcodeCanvas,
+                    value: inputText,
+                    size: qrSize,
+                    foreground: qrForeground,
+                    background: qrBackground,
+                    level: qrErrorCorrection
+                }).update();
+
+                qrMessage.classList.add('hidden');
+                downloadQrBtn.disabled = false;
+                qrFilenameInput.value = `qrcode_${getUniqueTimestamp()}`; // Default filename with timestamp
+                qrcodeCanvas.dataset.hasContent = 'true'; // Mark canvas as having content
+
+                // Automatically save to history after successful generation
+                saveCurrentCodesToHistory();
+
+            } catch (error) {
+                console.error("Error generating QR code:", error);
+                showMessageModal('Error al Generar QR', 'Ocurrió un error al generar el código QR. Asegúrate de que los valores sean válidos.');
+                qrMessage.classList.remove('hidden');
+                downloadQrBtn.disabled = true;
+                qrcodeCanvas.getContext('2d').clearRect(0, 0, qrcodeCanvas.width, qrcodeCanvas.height);
+                delete qrcodeCanvas.dataset.hasContent;
+            }
+        }
+
+        /**
+         * Generates only the barcode.
+         */
+        function generateBarcodeCode() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const barcodeSvg = document.getElementById('barcodeSvg');
+            const barcodeMessage = document.getElementById('barcodeMessage');
+            const downloadBarcodeBtn = document.getElementById('downloadBarcodeBtn');
+            const barcodeFilenameInput = document.getElementById('barcodeFilenameInput');
+            const barcodeFormat = document.getElementById('barcodeFormat').value;
+
+            if (!inputText) {
+                showMessageModal('Error de Entrada', 'Por favor, introduce texto para generar el código de barras.');
+                // Only clear SVG and disable button if there's no previous content
+                if (!barcodeSvg.dataset.hasContent || barcodeSvg.innerHTML.trim() === '') {
+                    barcodeMessage.classList.remove('hidden');
+                    downloadBarcodeBtn.disabled = true;
+                    barcodeSvg.innerHTML = ''; // Clear SVG content
+                    delete barcodeSvg.dataset.hasContent;
+                }
+                return;
+            }
+
+            const { isValid, errorMessage, example } = validateInput(inputText, barcodeFormat);
+            if (!isValid) {
+                showMessageModal('Error de Formato de Código de Barras', `${errorMessage} ${example ? ' ' + example : ''}`);
+                barcodeMessage.classList.remove('hidden');
+                downloadBarcodeBtn.disabled = true;
+                barcodeSvg.innerHTML = '';
+                delete barcodeSvg.dataset.hasContent;
+                return;
+            }
+
+            try {
+                // Clear previous barcode content
+                barcodeSvg.innerHTML = '';
+                // Render the barcode into the SVG element
+                JsBarcode(barcodeSvg, inputText, {
+                    format: barcodeFormat,
+                    displayValue: true,
+                    width: 2, // Default width for bars
+                    height: 100, // Default height for bars
+                    lineColor: "black", // Default line color
+                    background: "white" // Default background color
+                }).render();
+
+                // Ensure SVG dimensions are set for proper display/download
+                const firstChild = barcodeSvg.firstElementChild;
+                if (firstChild && firstChild.tagName === 'svg') {
+                    // Set explicit width/height if not already present or if they are 0
+                    if (!firstChild.hasAttribute('width') || !firstChild.hasAttribute('height') || firstChild.getAttribute('width') === '0' || firstChild.getAttribute('height') === '0') {
+                        const boundingBox = firstChild.getBBox();
+                        firstChild.setAttribute('width', boundingBox.width);
+                        firstChild.setAttribute('height', boundingBox.height);
+                    }
+                    barcodeSvg.setAttribute('viewBox', `0 0 ${firstChild.getAttribute('width')} ${firstChild.getAttribute('height')}`);
+                }
+                barcodeSvg.style.maxWidth = '100%';
+                barcodeSvg.style.height = 'auto';
+
+
+                barcodeMessage.classList.add('hidden');
+                downloadBarcodeBtn.disabled = false;
+                barcodeFilenameInput.value = `barcode_${getUniqueTimestamp()}`; // Default filename with timestamp
+                barcodeSvg.dataset.hasContent = 'true'; // Mark SVG as having content
+
+                // Automatically save to history after successful generation
+                saveCurrentCodesToHistory();
+
+            } catch (error) {
+                console.error("Error generating barcode:", error);
+                showMessageModal('Error al Generar Código de Barras', 'Ocurrió un error al generar el código de barras. Asegúrate de que los valores sean válidos y el formato correcto.');
+                barcodeMessage.classList.remove('hidden');
+                downloadBarcodeBtn.disabled = true;
+                barcodeSvg.innerHTML = '';
+                delete barcodeSvg.dataset.hasContent;
+            }
+        }
+
+        /**
+         * Generates both QR code and barcode.
+         */
+        function generateBothCodes() {
+            generateQrCode();
+            generateBarcodeCode();
+        }
+
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function applyTheme() {
+            const currentTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark');
+                themeIcon.textContent = '🌙'; // Moon icon for dark mode
+            } else {
+                document.body.classList.remove('dark');
+                themeIcon.textContent = '☀️'; // Sun icon for light mode
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            let currentTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+            let newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+            applyTheme();
+        });
+
+        // Initialize theme and load history on page load
+        window.addEventListener('load', () => {
+            applyTheme();
+            loadHistory();
+            displayBarcodeFormatInfo(); // Display initial info for barcode format
+        });
+    </script>
+</body>
+</html>
